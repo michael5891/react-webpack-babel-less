@@ -1,62 +1,89 @@
-import React, { Component } from 'react';
-import './App.less';
-import { MaterialTableComponent } from "./material_table/table";
-import { MATERIALS } from './materials';
+import React, { Component } from 'react'
+import './App.less'
+import { MaterialTableComponent } from './material_table/table'
+import { MATERIALS } from './materials'
+import { MaterialPalate } from './material_palate/palate'
 
 function getData(startIndex=0) {
-    return new Promise(function(resolve, reject) {
-        MATERIALS.getList(startIndex, resolve);
-    });
+  return new Promise((resolve) => {
+    MATERIALS.getList(startIndex, resolve)
+  })
 }
 
+function getCount() {
+  return new Promise((resolve) => {
+    MATERIALS.getCount(resolve)
+  })
+}
+
+const RecordSelect = ({ value }: any) => <input type="checkbox" checked={value}/>
+const RecordImg = ({ value }: any) => <img src={value} width="25" height="25" alt="fabric"/>
+
 const columns = [
-    {
-        Header: '',
-        accessor: 'selected',
-        Cell: ({ value }) => (<input type="checkbox" checked={value}/>),
-        width: 30,
-    },
-    {
-        Header: "Image",
-        Cell: ({ value }) => (<img src={value} width="25" height="25" alt="fabric"/>),
-        accessor: "imgSrc",
-    },
-    {
-        Header: 'Name',
-        accessor: "name",
-    }
-];
+  {
+    Header: '',
+    accessor: 'selected',
+    Cell: RecordSelect,
+    width: 30
+  },
+  {
+    Header: 'Image',
+    Cell: RecordImg,
+    accessor: 'imgSrc'
+  },
+  {
+    Header: 'Name',
+    accessor: 'name'
+  }
+]
 
 class App extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: [],
-        };
+  constructor(props) {
+    super(props)
+    this.state = {
+      data: [],
+      fabric: [],
+      seam: [],
+      attachment: []
     }
+  }
 
-    async componentDidMount() {
-        const data = await getData();
-        console.log('Mish:', data);
-        this.setState({ data })
-    }
+  async componentDidMount() {
+    const data = await getData()
+    const count = await getCount()
+    console.log('Count:', count)
+    console.log('Data:', data)
 
-    render() {
+    this.setState({
+      data,
+      fabric: data.filter((record) => record.type === 'fabric'),
+      seam: data.filter((record) => record.type === 'seam'),
+      attachment: data.filter((record) => record.type === 'attachment')
+    })
+  }
+
+
+  render() {
     return (
-        <div className="App" style={ { display: 'flex' } }>
-            <div style={ { flexDirection: 'column' } } className={"masterHeader"}>
-                <h2>Fabrics</h2>
-                <MaterialTableComponent data={this.state.data} columns={columns}/>
-                <h2>Seams</h2>
-                <MaterialTableComponent data={this.state.data} columns={columns}/>
-                <h2>Attachments</h2>
-                <MaterialTableComponent data={this.state.data} columns={columns}/>
-            </div>
-            <hr width="5" style={ {  height: '100px' } }/>
+      <div className="App" style={ { display: 'flex' } }>
+        <div className={'columnContainer'}>
+          <div className={'toolsHeader'}>
+            <h2>Fabrics</h2>
+            <MaterialTableComponent data={this.state.fabric} columns={columns} />
+            <h2>Seams</h2>
+            <MaterialTableComponent data={this.state.seam} columns={columns} />
+            <h2>Attachments</h2>
+            <MaterialTableComponent data={this.state.attachment} columns={columns} />
+          </div>
+          <div className={'toolsFooter'}>
+            <h2>Colors</h2>
+            <MaterialPalate data={this.state.data} />
+          </div>
         </div>
-    );
+      </div>
+    )
   }
 }
 
-export default App;
+export default App
