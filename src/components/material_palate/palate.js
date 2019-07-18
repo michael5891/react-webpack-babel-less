@@ -1,16 +1,16 @@
 import React from 'react'
 import './palate.less'
 
-export const MaterialColor = (props: { color: string }) => {
+export const MaterialColor = ({ color }) => {
   return (
-    <div className="labeledCircle" style={{ backgroundColor:props.color }}>
-      {props.color}
+    <div className="labeledCircle" style={{ backgroundColor: color }}>
+      {color}
     </div>
   )
 }
 
-export const MaterialPalate = (props: { data: [] }) => {
-  const colors = props.data.map((record) => `#${record.color.toString(16)}`)
+export const MaterialPalate = ({ data }) => {
+  const colors = data.map((record) => `#${record.color.toString(16)}`)
   const uniqueColorSet = [...new Set(colors)]
 
   return (

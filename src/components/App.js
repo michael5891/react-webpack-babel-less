@@ -16,8 +16,8 @@ function getCount() {
   })
 }
 
-const RecordSelect = ({ value }: any) => <input type="checkbox" checked={value}/>
-const RecordImg = ({ value }: any) => <img src={value} width="25" height="25" alt="fabric"/>
+const RecordSelect = ({ value }) => <input type="checkbox" checked={value}/>
+const RecordImg = ({ value }) => <img src={value} width="25" height="25" alt="fabric"/>
 
 const columns = [
   {
@@ -53,7 +53,8 @@ class App extends Component {
     const data = await getData()
     const count = await getCount()
     console.log('Count:', count)
-    console.log('Data:', data)
+    console.log('Data:', JSON.stringify(data))
+    console.log('Colors:', JSON.stringify(data.map((record) => record.color)))
 
     this.setState({
       data,
