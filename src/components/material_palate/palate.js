@@ -3,7 +3,7 @@ import './palate.less'
 
 export const MaterialColor = ({ color }) => {
   return (
-    <div className="labeledCircle" style={{ backgroundColor: color }}>
+    <div className="labeledCircle activeCircle" style={{ backgroundColor: color }}>
       {color}
     </div>
   )
