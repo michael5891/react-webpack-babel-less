@@ -3,28 +3,35 @@ import { MaterialTableComponent } from '../material_table/table'
 import { MaterialPalate } from '../material_palate/palate'
 import './tools_container.less';
 
-const RecordSelect = ({ value }) => <input type="checkbox" checked={value}/>;
-const RecordImg = ({ value }) => <img src={value} width="25" height="25" alt="fabric"/>;
+const RecordSelect = ({ record, onChange }) => {
+  return <input type="checkbox" checked={record.selected} onChange={() => onChange(record)}/>;
+};
 
-const columns = [
-  {
-    Header: '',
-    accessor: 'selected',
-    Cell: RecordSelect,
-    width: 30
-  },
-  {
-    Header: 'Image',
-    Cell: RecordImg,
-    accessor: 'imgSrc'
-  },
-  {
-    Header: 'Name',
-    accessor: 'name'
-  }
-];
+const RecordImg = ({ original: record, value }) => {
+  return <img src={value} className={'recordImg'} alt={record.type}/>;
+}
 
-export const ToolsContainer = ({ data, fabric, seam, attachment }) => {
+export const ToolsContainer = ({ data, fabric, seam, attachment, toggleSelected }) => {
+
+  const columns = [
+    {
+      Header: '',
+      accessor: 'selected',
+      Cell: ({ original: record }) => <RecordSelect record={record} onChange={toggleSelected}/>,
+      width: 30
+    },
+    {
+      Header: 'Image',
+      Cell: RecordImg,
+      accessor: 'imgSrc'
+    },
+    {
+      Header: 'Name',
+      accessor: 'name',
+      className: 'materialNaming'
+    }
+  ];
+
   return (
     <div className={'columnContainer'}>
       <div className={'toolsHeader'}>
