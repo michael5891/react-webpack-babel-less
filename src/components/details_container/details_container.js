@@ -1,30 +1,16 @@
 import React from 'react'
 import './details_container.less';
+import { SingleRecordDetails } from './single_record/single_record';
+import { MultipleRecordsDetails } from './multiple_records/multiple_records';
 
 const PlaceHolder = () => <h2>Select a Fabric from the List on the Left</h2>;
-
-const RecordName = ({ records }) => {
-  if (records.length === 1)
-    return <h2 className={'materialNaming'}>{records[0].name}</h2>;
-  else if(records.length > 1)
-    return <h2>In progress</h2>
-
-  return <PlaceHolder/>
-}
-
-const MyImg = ({ records }) => {
-  console.log(records);
-  if(records && records.length > 0)
-    return <img src={records[0].imgSrc} width="300" height="300"/>;
-
-  return '';
-}
 
 export const DetailsContainer = ({ records }) => {
   return (
     <div>
-      <RecordName records={ records }/>
-      <MyImg records={ records }/>
+      { records.length === 0 ? <PlaceHolder /> : null}
+      { records.length === 1 ? <SingleRecordDetails record={ records[0] } /> : null}
+      { records.length > 1 ? <MultipleRecordsDetails records={ records } /> : null}
     </div>
   );
 };
