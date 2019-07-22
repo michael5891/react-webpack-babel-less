@@ -13,8 +13,8 @@ export const MaterialTableComponent = (props) => {
       data={props.data}
       columns={props.columns}
       showPagination={false}
-      defaultPageSize={3}
       minRows={3}
+      style={{ height: '150px' }}
     />
   );
 };

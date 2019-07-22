@@ -60,7 +60,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ToolsContainer {...this.state} toggleSelected={ (record) => this.toggleSelected(record) }/>
+        <ToolsContainer{...this.state} toggleSelected={ (record) => this.toggleSelected(record) }/>
         <DetailsContainer records={ this.state.selected } />
       </div>
     )

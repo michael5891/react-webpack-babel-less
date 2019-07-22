@@ -44,7 +44,7 @@ export const ToolsContainer = ({ data, fabric, seam, attachment, toggleSelected 
       </div>
       <div className={'toolsFooter'}>
         <h2>Colors</h2>
-        <MaterialPalate data={data} />
+        <MaterialPalate records={data} />
       </div>
     </div>
   );

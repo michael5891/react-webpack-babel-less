@@ -9,8 +9,8 @@ export const MaterialColor = ({ color }) => {
   )
 }
 
-export const MaterialPalate = ({ data }) => {
-  const colors = data.map((record) => `#${record.color.toString(16)}`)
+export const MaterialPalate = ({ records }) => {
+  const colors = records.map((record) => `#${record.color.toString(16)}`)
   const uniqueColorSet = [...new Set(colors)]
 
   return (
