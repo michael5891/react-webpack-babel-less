@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "less": "^3.9.0",
+    "lodash": "^4.17.15",
     "react-table": "^6.10.0"
   },
   "husky": {

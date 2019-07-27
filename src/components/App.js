@@ -10,6 +10,14 @@ function getData(startIndex=0) {
   })
 }
 
+/* TODO:
+1) add styled layout system
+2) typescript?
+3) Redux?
+4) pureComponents?
+5) lodash?
+*/
+
 class App extends Component {
 
   constructor(props) {
@@ -25,6 +33,9 @@ class App extends Component {
 
   async componentDidMount() {
     const data = await getData();
+
+    // Convert int to hex rgb
+    data.map((record) => record.colorRGB = `#${record.color.toString(16)}`);
 
     console.log('Data:', data);
 

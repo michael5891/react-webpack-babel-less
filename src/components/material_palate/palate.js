@@ -1,21 +1,21 @@
 import React from 'react'
+import { uniqBy } from 'lodash';
 import './palate.less'
 
-export const MaterialColor = ({ color }) => {
+export const MaterialColor = ({ color, size = 'small' }) => {
   return (
-    <div className="labeledCircle activeCircle" style={{ backgroundColor: color }}>
+    <div className={`labeledCircle activeCircle ${size}`} style={{ backgroundColor: color }}>
       {color}
     </div>
   )
 }
 
 export const MaterialPalate = ({ records }) => {
-  const colors = records.map((record) => `#${record.color.toString(16)}`)
-  const uniqueColorSet = [...new Set(colors)]
-
   return (
     <div className={'palateContainer'}>
-      { uniqueColorSet.map((color) => <MaterialColor key={color} color={color}/>) }
+      { uniqBy(records, 'colorRGB').map((record) =>
+        <MaterialColor key={record.color} color={record.colorRGB}/>
+      ) }
     </div>
   )
 }
