@@ -1,190 +1,224 @@
-export var MATERIALS = (function (undefined) {
+export const MATERIALS = (function() {
+  // settings
 
-	// settings
+  const LIST_CHUNK_LENGTH = 20;
+  const IMAGE_MIN_SIZE = 150;
+  const IMAGE_MAX_SIZE = 300;
+  const TYPES_COLORS = {
+    fabric: [220, 50, 50],
+    seam: [50, 220, 50],
+    attachment: [50, 50, 220]
+  };
+  const TYPES = Object.keys(TYPES_COLORS);
 
-	var LIST_CHUNK_LENGTH = 20;
-	var IMAGE_MIN_SIZE = 150;
-	var IMAGE_MAX_SIZE = 300;
-	var TYPES_COLORS = {
-		'fabric': [220, 50, 50],
-		'seam': [50, 220, 50],
-		'attachment': [50, 50, 220]
-	};
-	var TYPES = Object.keys(TYPES_COLORS);
+  const materials = [];
 
-	var materials = [];
+  // utils
 
-	// utils
+  const randomizeResponse = function(callback, res) {
+    const delay = Math.random() * 200;
+    setTimeout(() => {
+      callback(res);
+    }, delay);
+  };
 
-	var randomizeResponse = function (callback, res) {
-		var delay = Math.random() * 200;
-		setTimeout(function () {
-			callback(res);
-		}, delay);
-	};
+  const deepCopy = function(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  };
 
-	var deepCopy = function (obj) {
-		return JSON.parse(JSON.stringify(obj));
-	};
+  const getMaterialById = function(id) {
+    for (let i = 0; i < materials.length; i++)
+      if (materials[i].id === id) return materials[i];
 
-	var getMaterialById = function (id) {
-		for (var i = 0; i < materials.length; i++) {
-			if (materials[i].id == id) {
-				return materials[i];
-			}
-		}
+    return null;
+  };
 
-		return null;
-	};
+  const pad = function(str, length, chr) {
+    while (str.length < length) str = chr + str;
 
-	var pad = function (str, length, chr) {
-		while (str.length < length) {
-			str = chr + str;
-		}
-		return str;
-	};
+    return str;
+  };
 
-	var getMaterialImageSrc = function (width, height, color, name) {
-		var canvas = document.createElementNS("http://www.w3.org/1999/xhtml","canvas");
-		canvas.width = width;
-		canvas.height = height;
+  const getMaterialImageSrc = function(width, height, color, name) {
+    const canvas = document.createElementNS(
+      'http://www.w3.org/1999/xhtml',
+      'canvas'
+    );
+    canvas.width = width;
+    canvas.height = height;
 
-		var context = canvas.getContext("2d");
+    const context = canvas.getContext('2d');
 
-		var gradient = context.createLinearGradient(0, 0, 0, height);
-		gradient.addColorStop(0, "#" + pad(color.toString(16), 6, "0"));
-		gradient.addColorStop(1, "rgba(" + (color >> 16 & 0xFF).toString() + ", " + (color >> 8 & 0xFF).toString() + ", " + (color & 0xFF).toString() + ", 0.8)" );
+    const gradient = context.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, `#${pad(color.toString(16), 6, '0')}`);
+    gradient.addColorStop(
+      1,
+      `rgba(${(color >> 16 & 0xff).toString()}, ${(
+        color >> 8 &
+        0xff
+      ).toString()}, ${(color & 0xff).toString()}, 0.8)`
+    );
 
-		context.fillStyle = gradient;
-		context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
 
-		context.font = "bold 14px Arial";
-		context.fillStyle = "#FFFFFF";
+    context.font = 'bold 14px Arial';
+    context.fillStyle = '#FFFFFF';
 
-		var metrics = context.measureText(name);
-		context.fillText(name, (canvas.width - metrics.width) / 2, canvas.height / 2 + 6);
+    const metrics = context.measureText(name);
+    context.fillText(
+      name,
+      (canvas.width - metrics.width) / 2,
+      canvas.height / 2 + 6
+    );
 
-		return canvas.toDataURL("image/png");
-	};
+    return canvas.toDataURL('image/png');
+  };
 
-	var getMaterialColor = function (type) {
-		var color = TYPES_COLORS[type].slice();
-		color[0] += Math.round(Math.random() * 60) - 30;
-		color[1] += Math.round(Math.random() * 60) - 30;
-		color[2] += Math.round(Math.random() * 60) - 30;
+  const getMaterialColor = function(type) {
+    const color = TYPES_COLORS[type].slice();
+    color[0] += Math.round(Math.random() * 60) - 30;
+    color[1] += Math.round(Math.random() * 60) - 30;
+    color[2] += Math.round(Math.random() * 60) - 30;
 
-		return ((color[0] & 0xFF) << 16) + ((color[1] & 0xFF) << 8) + (color[2] & 0xFF);
-	};
+    return (
+      ((color[0] & 0xff) << 16) + ((color[1] & 0xff) << 8) + (color[2] & 0xff)
+    );
+  };
 
-	// create materials
+  // create materials
 
-	var materialsTypesCount = {};
-	TYPES.forEach(function (type) {
-		materialsTypesCount[type] = 0;
-	});
+  const materialsTypesCount = {};
+  TYPES.forEach(type => {
+    materialsTypesCount[type] = 0;
+  });
 
-	var materialsCount = Math.ceil(Math.random() * 50) + 50;
+  const materialsCount = Math.ceil(Math.random() * 50) + 50;
 
-	var type, name, width, height, color, imgSrc;
-	for (var i = 0; i < materialsCount; i++) {
-		type = TYPES[Math.floor(Math.random() * TYPES.length)];
-		materialsTypesCount[type]++;
+  let type, name, width, height, color, imgSrc;
+  for (let i = 0; i < materialsCount; i++) {
+    type = TYPES[Math.floor(Math.random() * TYPES.length)];
+    materialsTypesCount[type]++;
 
-		name = type + " #" + materialsTypesCount[type];
+    name = `${type} #${materialsTypesCount[type]}`;
 
-		width = IMAGE_MIN_SIZE + Math.random() * (IMAGE_MAX_SIZE - IMAGE_MIN_SIZE);
-		height = IMAGE_MIN_SIZE + Math.random() * (IMAGE_MAX_SIZE - IMAGE_MIN_SIZE);
+    width = IMAGE_MIN_SIZE + Math.random() * (IMAGE_MAX_SIZE - IMAGE_MIN_SIZE);
+    height = IMAGE_MIN_SIZE + Math.random() * (IMAGE_MAX_SIZE - IMAGE_MIN_SIZE);
 
-		color = getMaterialColor(type);
+    color = getMaterialColor(type);
 
-		imgSrc = getMaterialImageSrc(width, height, color, name);
+    imgSrc = getMaterialImageSrc(width, height, color, name);
 
-		materials.push({
-			id: i,
-			type: type,
-			name: name,
-			width: width,
-			height: height,
-			color: color,
-			imgSrc: imgSrc
-		});
-	}
+    materials.push({
+      id: i,
+      type: type,
+      name: name,
+      width: width,
+      height: height,
+      color: color,
+      imgSrc: imgSrc
+    });
+  }
 
-	// public API
+  // public API
 
-	return {
-		// get
+  return {
+    // get
 
-		getCount: function (callback) {
-			randomizeResponse(callback, materials.length);
-		},
+    getCount: function(callback) {
+      randomizeResponse(callback, materials.length);
+    },
 
-		getList: function (startIndex, callback) {
-			if (typeof startIndex != "number" || startIndex < 0 || startIndex >= materials.length) {
-				return [];
-			}
+    getList: function(startIndex, callback) {
+      if (
+        typeof startIndex !== 'number' ||
+        startIndex < 0 ||
+        startIndex >= materials.length
+      )
+        return [];
 
-			var res = deepCopy(materials.slice(startIndex, startIndex + LIST_CHUNK_LENGTH));
+      const res = deepCopy(
+        materials.slice(startIndex, startIndex + LIST_CHUNK_LENGTH)
+      );
 
-			randomizeResponse(callback, res);
-		},
+      randomizeResponse(callback, res);
+    },
 
-		// set
+    // set
 
-		setName: function (id, name, callback) {
-			if (typeof name != "string" || !name) {
-				randomizeResponse(callback, false);
-				return;
-			}
+    setName: function(id, value, callback) {
+      if (typeof value !== 'string' || !value) {
+        randomizeResponse(callback, false);
+        return;
+      }
 
-			var material = getMaterialById(id);
-			if (!material) {
-				randomizeResponse(callback, false);
-				return;
-			}
+      const material = getMaterialById(id);
+      if (!material) {
+        randomizeResponse(callback, false);
+        return;
+      }
 
-			material.name = name;
-			material.imgSrc = getMaterialImageSrc(material.width, material.height, material.color, material.name);
+      material.name = value;
+      material.imgSrc = getMaterialImageSrc(
+        material.width,
+        material.height,
+        material.color,
+        material.name
+      );
 
-			randomizeResponse(callback, true);
-		},
+      randomizeResponse(callback, true);
+    },
 
-		setSize: function (id, width, height, callback) {
-			if (typeof width != "number" || width <= 0 || typeof height != "number" || height <= 0) {
-				randomizeResponse(callback, false);
-				return;
-			}
+    setSize: function(id, newWidth, newHeight, callback) {
+      if (
+        typeof newWidth !== 'number' ||
+        newWidth <= 0 ||
+        typeof newHeight !== 'number' ||
+        newHeight <= 0
+      ) {
+        randomizeResponse(callback, false);
+        return;
+      }
 
-			var material = getMaterialById(id);
-			if (!material) {
-				randomizeResponse(callback, false);
-				return;
-			}
+      const material = getMaterialById(id);
+      if (!material) {
+        randomizeResponse(callback, false);
+        return;
+      }
 
-			material.width = width;
-			material.height = height;
-			material.imgSrc = getMaterialImageSrc(material.width, material.height, material.color, material.name);
+      material.width = newWidth;
+      material.height = newHeight;
+      material.imgSrc = getMaterialImageSrc(
+        material.width,
+        material.height,
+        material.color,
+        material.name
+      );
 
-			randomizeResponse(callback, true);
-		},
+      randomizeResponse(callback, true);
+    },
 
-		setColor: function (id, color, callback) {
-			if (typeof color != "number" || color < 0) {
-				randomizeResponse(callback, false);
-				return;
-			}
+    setColor: function(id, value, callback) {
+      if (typeof value !== 'number' || value < 0) {
+        randomizeResponse(callback, false);
+        return;
+      }
 
-			var material = getMaterialById(id);
-			if (!material) {
-				randomizeResponse(callback, false);
-				return;
-			}
+      const material = getMaterialById(id);
+      if (!material) {
+        randomizeResponse(callback, false);
+        return;
+      }
 
-			material.color = color;
-			material.imgSrc = getMaterialImageSrc(material.width, material.height, material.color, material.name);
+      material.color = value;
+      material.imgSrc = getMaterialImageSrc(
+        material.width,
+        material.height,
+        material.color,
+        material.name
+      );
 
-			randomizeResponse(callback, true);
-		}
-	};
-
+      randomizeResponse(callback, true);
+    }
+  };
 })();
