@@ -6,12 +6,10 @@ process.env.NODE_ENV = 'development';
 module.exports = {
   devtool: 'cheap-module-source-map',
   devServer: {
-    stats: 'minimal', // minimum info in command line
-    overlay: true, // overlay browser errors
-    historyApiFailCheck: true,
-    disableHostCheck: true,
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    https: false
+    open: true,
+    port: 3000,
+    stats: 'minimal',
+    overlay: true
   },
   entry: './src/index',
   mode: 'development',
